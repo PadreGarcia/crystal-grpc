@@ -17,4 +17,4 @@ targets:
   crystal-grpc:
     main: src/crystal-grpc.cr
   protoc-gen-crystal:
-    main: bin/protoc-gen-crystal
+    main: src/protoc-gen-crystal.cr

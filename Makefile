@@ -11,7 +11,7 @@ build: ## Build the library (syntax check)
 generator: ## Build the code generator
 	@echo "Building code generator..."
 	@mkdir -p bin
-	@crystal build bin/protoc-gen-crystal -o bin/protoc-gen-crystal
+	@crystal build src/protoc-gen-crystal.cr -o bin/protoc-gen-crystal
 	@echo "Generator built: bin/protoc-gen-crystal"
 
 test: ## Run tests
