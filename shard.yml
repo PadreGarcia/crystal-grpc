@@ -1,0 +1,20 @@
+name: crystal-grpc
+version: 0.1.0
+
+authors:
+  - PadreGarcia
+
+crystal: 1.18.2
+
+description: |
+  Pure Crystal gRPC implementation from scratch.
+  No wrappers, no bindings, no external gRPC runtime.
+  Implements HTTP/2 framing, Protocol Buffers serialization, and gRPC wire protocol natively.
+
+license: MIT
+
+targets:
+  crystal-grpc:
+    main: src/crystal-grpc.cr
+  protoc-gen-crystal:
+    main: src/protoc-gen-crystal.cr
