@@ -1,0 +1,27 @@
+# Crystal
+/docs/
+/lib/
+/.shards/
+*.dwarf
+
+# Build artifacts
+/bin/
+/build/
+*.o
+*.a
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+/tmp/
+*.tmp
+*.log
