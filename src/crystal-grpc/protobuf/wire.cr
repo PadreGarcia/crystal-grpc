@@ -16,14 +16,14 @@ module Protobuf
   def self.encode_varint(value : UInt64) : Bytes
     return Bytes[0] if value == 0
 
-    result = [] of UInt8
+    io = IO::Memory.new
     while value != 0
       byte = (value & 0x7F).to_u8
       value >>= 7
       byte |= 0x80 if value != 0
-      result << byte
+      io.write_byte(byte)
     end
-    Bytes.new(result.to_unsafe, result.size)
+    io.to_slice
   end
 
   # Decode a varint from a Slice

@@ -43,17 +43,19 @@ module GRPC
       
       puts "gRPC server listening on #{@host}:#{@port}"
       
-      while @running
-        socket = server.accept?
-        break unless socket
-        
-        # Handle each connection in a separate fiber
-        spawn handle_connection(socket)
+      begin
+        while @running
+          socket = server.accept?
+          break unless socket
+          
+          # Handle each connection in a separate fiber
+          spawn handle_connection(socket)
+        end
+      rescue ex
+        puts "Server error: #{ex.message}"
+      ensure
+        server.close
       end
-    rescue ex
-      puts "Server error: #{ex.message}"
-    ensure
-      server.try &.close
     end
 
     # Stop the server

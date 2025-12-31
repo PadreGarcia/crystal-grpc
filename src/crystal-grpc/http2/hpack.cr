@@ -135,7 +135,7 @@ module HTTP2
           
           while value >= 128
             io.write_byte(((value % 128) + 128).to_u8)
-            value //= 128
+            value = (value / 128).to_i
           end
           
           io.write_byte(value.to_u8)

@@ -48,51 +48,53 @@ module GRPC
       stream = conn.stream_manager.create_stream
       stream_id = stream.id
       
-      # Build request headers
-      headers = {
-        ":method"      => "POST",
-        ":scheme"      => "http",
-        ":path"        => "/#{service}/#{method}",
-        ":authority"   => "#{@host}:#{@port}",
-        "content-type" => "application/grpc",
-        "te"           => "trailers",
-      }
-      
-      # Add timeout if specified
-      if timeout
-        timeout_str = format_timeout(timeout)
-        headers["grpc-timeout"] = timeout_str
-      end
-      
-      # Send headers
-      conn.send_headers(stream_id, headers, end_stream: false)
-      
-      # Encode and send gRPC message
-      grpc_message = GRPC.encode_message(request)
-      conn.send_data(stream_id, grpc_message, end_stream: true)
-      
-      # Wait for response
-      response_channel = Channel(Response).new(1)
-      
-      spawn do
-        response = wait_for_response(conn, stream)
-        response_channel.send(response)
-      end
-      
-      # Wait for response with optional timeout
-      if timeout
-        select
-        when response = response_channel.receive
-          response
-        when timeout(timeout)
-          conn.send_rst_stream(stream_id, 8_u32) # CANCEL
-          Response.new(Bytes.empty, Status.cancelled("Request timeout"))
+      begin
+        # Build request headers
+        headers = {
+          ":method"      => "POST",
+          ":scheme"      => "http",
+          ":path"        => "/#{service}/#{method}",
+          ":authority"   => "#{@host}:#{@port}",
+          "content-type" => "application/grpc",
+          "te"           => "trailers",
+        }
+        
+        # Add timeout if specified
+        if timeout
+          timeout_str = format_timeout(timeout)
+          headers["grpc-timeout"] = timeout_str
         end
-      else
-        response_channel.receive
+        
+        # Send headers
+        conn.send_headers(stream_id, headers, end_stream: false)
+        
+        # Encode and send gRPC message
+        grpc_message = GRPC.encode_message(request)
+        conn.send_data(stream_id, grpc_message, end_stream: true)
+        
+        # Wait for response
+        response_channel = Channel(Response).new(1)
+        
+        spawn do
+          response = wait_for_response(conn, stream)
+          response_channel.send(response)
+        end
+        
+        # Wait for response with optional timeout
+        if timeout
+          select
+          when response = response_channel.receive
+            response
+          when timeout(timeout)
+            conn.send_rst_stream(stream_id, 8_u32) # CANCEL
+            Response.new(Bytes.empty, Status.cancelled("Request timeout"))
+          end
+        else
+          response_channel.receive
+        end
+      ensure
+        conn.stream_manager.close_stream(stream_id)
       end
-    ensure
-      conn.try &.stream_manager.close_stream(stream_id) if stream_id
     end
 
     # Wait for response on a stream

@@ -67,7 +67,9 @@ module HTTP2
       
       # Read frame payload
       payload = Bytes.new(length)
-      @socket.read_fully(payload) if length > 0
+      if length > 0
+        @socket.read_fully(payload)
+      end
       
       # Combine header and payload
       full_frame = Bytes.new(9 + length)
