@@ -5,10 +5,15 @@
 *.dwarf
 
 # Build artifacts
-/bin/
+/bin/echo_server
+/bin/echo_client
+/bin/protoc-gen-crystal
 /build/
 *.o
 *.a
+
+# Generated code (examples)
+*_generated.cr
 
 # IDE
 .vscode/

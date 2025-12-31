@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package example;
+
+// Example request message
+message EchoRequest {
+  string message = 1;
+  int32 count = 2;
+}
+
+// Example response message
+message EchoResponse {
+  string reply = 1;
+  int64 timestamp = 2;
+}
+
+// Example service
+service Echo {
+  rpc SayHello (EchoRequest) returns (EchoResponse);
+  rpc Echo (EchoRequest) returns (EchoResponse);
+}

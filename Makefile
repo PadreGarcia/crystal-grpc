@@ -1,4 +1,4 @@
-.PHONY: help build test examples clean format
+.PHONY: help build test examples clean format generator
 
 help: ## Show this help message
 	@echo "Available targets:"
@@ -8,12 +8,19 @@ build: ## Build the library (syntax check)
 	@echo "Checking Crystal syntax..."
 	@crystal build --no-codegen src/crystal-grpc.cr
 
+generator: ## Build the code generator
+	@echo "Building code generator..."
+	@mkdir -p bin
+	@crystal build bin/protoc-gen-crystal -o bin/protoc-gen-crystal
+	@echo "Generator built: bin/protoc-gen-crystal"
+
 test: ## Run tests
 	@echo "Running tests..."
 	@crystal spec
 
 examples: ## Build examples
 	@echo "Building echo server..."
+	@mkdir -p bin
 	@crystal build examples/echo_server.cr -o bin/echo_server
 	@echo "Building echo client..."
 	@crystal build examples/echo_client.cr -o bin/echo_client

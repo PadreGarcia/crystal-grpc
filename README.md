@@ -37,6 +37,12 @@ This is NOT a wrapper, NOT bindings, and NOT using external gRPC runtimes. Every
 - Channel-based communication
 - Efficient binary operations with Slice(UInt8) and IO::Memory
 
+✅ **Code Generator**
+- Generate Crystal stubs from .proto files
+- Strong typing (no macros)
+- Idiomatic Crystal output
+- Reads FileDescriptorSet from protoc
+
 ## Installation
 
 Add this to your application's `shard.yml`:
@@ -152,6 +158,8 @@ client.close
 
 ## Examples
 
+### Manual API (examples/echo_server.cr)
+
 Run the echo server:
 
 ```bash
@@ -163,6 +171,21 @@ In another terminal, run the client:
 ```bash
 crystal run examples/echo_client.cr
 ```
+
+### Code Generator
+
+Generate strongly-typed stubs from .proto files:
+
+```bash
+# Build the generator
+shards build protoc-gen-crystal
+
+# Generate code from .proto file
+protoc --descriptor_set_out=/dev/stdout --include_imports example.proto | \
+  ./bin/protoc-gen-crystal > generated.cr
+```
+
+See [CODEGEN.md](CODEGEN.md) for complete code generator documentation.
 
 ## API Documentation
 
